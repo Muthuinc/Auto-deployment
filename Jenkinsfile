@@ -62,10 +62,10 @@ pipeline {
                 sh '''
                 sleep 180 
                 cd Config/loadbalancer
-                terraform destroy --auto-apply
+                terraform destroy --auto-approve
                 cd ..
                 cd terraform 
-                terraform destroy --auto-apply
+                terraform destroy --auto-approve
                 '''
             }
         }
