@@ -1,0 +1,49 @@
+- hosts: muthu
+  remote_user: ubuntu
+  become: true  
+  tasks:
+    - name: Adding Docker key       # Installing docker as per the official instructions
+      get_url:  
+        url: https://download.docker.com/linux/ubuntu/gpg
+        dest: /etc/apt/keyrings/gpg
+    - name: Converting Docker key
+      ansible.builtin.shell:
+        cmd: gpg --dearmor --output /etc/apt/keyrings/docker.gpg /etc/apt/keyrings/gpg
+        creates: /etc/apt/keyrings/docker.gpg
+    - name: Adding docker repo
+      apt_repository:
+        filename: /etc/apt/sources.list.d/docker
+        repo: deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu   jammy stable
+        state: present
+        update_cache: true
+    - name: update all			      # Apt update all
+      apt:
+        name: "*"
+        state: latest
+    - name: install docker
+      apt:
+        name: docker-ce
+        state: present
+    - name: install docker containerd
+      apt:
+        name: containerd.io
+        state: present
+    - name: installing pip for docker	      # This is required for the below docker python package
+      apt:
+        name: python3-pip
+        state: present
+    - name: Install bottle python package     # This is required for ansible to process docker
+      ansible.builtin.pip:
+        name: docker
+    - name: pull an image                     # Pulling the published image
+      docker_image:
+        name: muthuinc/devopsthon:v1
+        source: pull
+    - name: start an image                    # Starting the image
+      docker_container:
+        name: my_container
+        image: muthuinc/devopsthon:v1
+        ports:
+          - "5000:5000"
+        
+    
