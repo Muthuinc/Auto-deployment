@@ -83,7 +83,7 @@ variable "routetable" {
 }
 
 variable "myip" {
-    default = ["1.38.103.41/32"]
+    default = ["0.0.0.0/0"]
 }
 
 variable "app_port" {
